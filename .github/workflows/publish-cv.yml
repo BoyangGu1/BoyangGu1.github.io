@@ -1,0 +1,46 @@
+name: Publish academic CV
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '_cv/**'
+      - '.github/workflows/publish-cv.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install LaTeX and PDF validation tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends texlive-xetex texlive-latex-extra texlive-bibtex-extra biber fonts-lato poppler-utils
+      - name: Build academic CV
+        working-directory: _cv
+        run: |
+          set -e
+          xelatex -interaction=nonstopmode -halt-on-error cv.tex >/dev/null
+          biber cv >/dev/null
+          xelatex -interaction=nonstopmode -halt-on-error cv.tex >/dev/null
+          xelatex -interaction=nonstopmode -halt-on-error cv.tex >/dev/null
+          test "$(pdfinfo cv.pdf | awk '/^Pages:/ {print $2}')" = "1"
+          pdftotext cv.pdf - | grep -q 'Boyang Gu'
+          pdftotext cv.pdf - | grep -q 'Equal contribution'
+          cp cv.pdf ../CV.pdf
+      - name: Commit updated website CV
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add CV.pdf
+          if ! git diff --cached --quiet; then
+            git commit -m 'Refresh website CV.pdf from academic CV source'
+            git push origin HEAD:main
+          fi

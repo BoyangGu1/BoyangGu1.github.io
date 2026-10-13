@@ -1,0 +1,117 @@
+% Academic CV | Boyang Gu | updated October 2026
+% Compile with XeLaTeX -> Biber -> XeLaTeX -> XeLaTeX.
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[a4paper,margin=1.40cm]{geometry}
+\usepackage{fontspec}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[backend=biber,style=ieee,sorting=none,maxnames=6,minnames=6,
+  giveninits=false,doi=true,url=true,isbn=false]{biblatex}
+\addbibresource{own-bib.bib}
+
+% Retain the original Overleaf Fontin files; use a TeX Live font for
+% standalone local compilation when those files are not available.
+\IfFileExists{Fontin.otf}{%
+  \setmainfont[BoldFont=Fontin-Bold.otf,ItalicFont=Fontin-Italic.otf,
+    SmallCapsFont=Fontin-SmallCaps.otf]{Fontin.otf}%
+}{\setmainfont{Lato}}
+
+\definecolor{linkblue}{HTML}{155A97}
+\hypersetup{colorlinks=true,urlcolor=linkblue,linkcolor=linkblue,
+  pdftitle={Boyang Gu - Academic CV},pdfauthor={Boyang Gu}}
+\urlstyle{same}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\emergencystretch}{2em}
+\titleformat{\section}{\large\bfseries}{}{0pt}{}[\titlerule]
+\titlespacing*{\section}{0pt}{9pt}{4pt}
+\setlist[itemize]{leftmargin=1.45em,itemsep=0pt,topsep=2pt,parsep=0pt}
+\AtBeginBibliography{\small}
+\setlength{\bibitemsep}{5pt}
+\DeclareFieldFormat{url}{\href{#1}{[Paper]}}
+\DeclareFieldFormat{doi}{\href{https://doi.org/#1}{[DOI]}}
+
+% Bold Boyang Gu; mark ALL authors annotated with 'cofirst' in own-bib.bib.
+% Keep co-first designation per publication rather than per surname.
+% Expanded comparisons handle biblatex's name-part macros.
+\ExplSyntaxOn
+\NewDocumentCommand{\CVGiven}{m}{%
+  \str_if_eq:eeTF {#1} {Boyang} {\textbf{#1}} {#1}%
+}
+\NewDocumentCommand{\CVFamily}{m}{%
+  \str_if_eq:eeTF {#1} {Gu} {\textbf{#1}} {#1}%
+  \ifitemannotation{cofirst}{\textsuperscript{*}}{}%
+}
+\ExplSyntaxOff
+\renewcommand*{\mkbibnamegiven}[1]{\CVGiven{#1}}
+\renewcommand*{\mkbibnamefamily}[1]{\CVFamily{#1}}
+
+\newcommand{\cventry}[3]{%
+  \noindent\begin{tabular*}{\linewidth}{@{}l@{\extracolsep{\fill}}r@{}}
+    \textbf{#1} & \textit{#2}\\
+  \end{tabular*}\par\vspace{-3pt}%
+  #3\par\vspace{2pt}%
+}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Boyang Gu}\\[4pt]
+  DPhil Student, Department of Psychiatry, University of Oxford\\[4pt]
+  \href{mailto:boyang.gu@psych.ox.ac.uk}{boyang.gu@psych.ox.ac.uk}\enspace$\vert$\enspace
+  \href{https://boyanggu1.github.io/}{Website}\enspace$\vert$\enspace
+  \href{https://scholar.google.com/citations?user=3IXxQiQAAAAJ}{Google Scholar}\enspace$\vert$\enspace
+  \href{https://github.com/BoyangGu1}{GitHub}
+\end{center}
+
+\section{Research Interests}
+Reliable and evidence-grounded AI for healthcare; clinical NLP; causal inference from
+longitudinal electronic health records; verifiable reasoning and scientific workflows.
+
+\section{Education}
+\cventry{University of Oxford}{Oct. 2026 -- Present}{%
+  DPhil in Psychiatry. Research focus: language-grounded causal inference from electronic mental health records.}
+\cventry{Imperial College London}{2023 -- 2024}{%
+  MSc in Computing (Artificial Intelligence and Machine Learning), \textbf{Distinction} (80.61\%).}
+\cventry{Imperial College London}{2019 -- 2023}{%
+  MSci in Mathematics, \textbf{First Class Honours} (81.87\%).}
+
+\section{Research Experience}
+\cventry{Research Intern, MIT CSAIL}{2025 -- Present}{%
+  Research under Prof. Wojciech Matusik, Massachusetts Institute of Technology.
+  \begin{itemize}
+    \item Developing a typed domain-specific language and AI copilot for protein design and structural biology, with reusable objects and validated scientific operators.
+    \item Integrating structure prediction, docking, relaxation, and simulation backends into reproducible workflows with explicit validation and provenance.
+  \end{itemize}
+}
+\cventry{DPhil Research, University of Oxford}{2026 -- Present}{%
+  Investigating how longitudinal mental-health clinical text can support time-anchored extraction of causally relevant variables, confounder identification, and observational treatment-effect studies.}
+
+\section{Publications}
+\input{publications}
+
+\section{Selected Research Projects}
+\cventry{Clinical-R1: Verifiable Reinforcement Learning for Clinical Reasoning}{2025 -- 2026}{%
+  \begin{itemize}
+    \item Developed Clinical-Objective Relative Policy Optimization (CRPO), combining verifiable reward signals for accuracy, faithfulness, and comprehensiveness.
+    \item Trained and evaluated Clinical-R1-3B against standard GRPO approaches. \href{https://github.com/BoyangGu1/Clinical-R1-3B}{[Code and models]}
+  \end{itemize}
+}
+\cventry{Hospital-Course Summarization from MIMIC-III}{2024}{%
+  \begin{itemize}
+    \item Constructed a hospital-course summarization dataset from MIMIC-III and explored supervised fine-tuning (SFT) and direct preference optimization (DPO).
+    \item Developed a rewriting pipeline aimed at reducing factual inconsistency in generated summaries. \href{https://github.com/BoyangGu1/MIMIC-Admission-Summary}{[Project]}
+  \end{itemize}
+}
+\cventry{Scaling Laws for Mixed Quantization}{2024 -- 2026}{%
+  Studied how post-training quantization loss varies with model size, quantization ratio $Q_r$, and quantization block size $Q_b$; accepted for an EMNLP 2026 oral presentation.}
+
+\section{Awards and Teaching}
+\begin{itemize}
+  \item Dean's List, Imperial College London (2020, 2021).
+  \item Peer Tutor for first-year students, Imperial College London (2022--2023).
+\end{itemize}
+\end{document}
